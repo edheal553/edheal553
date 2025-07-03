@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fitness Tracker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(45deg, #1d1f28, #28323c);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+      height: 100vh;
+      background-size: cover;
+    }
+
+    .tracker {
+      background: rgba(0, 0, 0, 0.6);
+      max-width: 700px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #4caf50;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #ddd;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      font-size: 16px;
+      border: 2px solid #4caf50;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    button {
+      background: linear-gradient(45deg, #4caf50, #45a049);
+      color: white;
+      padding: 12px 20px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #45a049, #4caf50);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .output, ul {
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .output p, ul li {
+      margin: 5px 0;
+    }
+
+    .timer-display {
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+      color: #4caf50;
+    }
+
+    .timer-controls button {
+      width: 30%;
+      margin: 5px 1%;
+    }
+  </style>
+</head>
+<body>
+  <div class="tracker">
+    <h1>NTLITE FITNESS TRACKER</h1>
+
+    <div class="section">
+      <h2>Your Profile</h2>
+      <label for="weight">Weight (kg):</label>
+      <input type="number" id="weight" placeholder="Enter your weight">
+      <label for="height">Height (cm):</label>
+      <input type="number" id="height" placeholder="Enter your height">
+    </div>
+
+    <div class="section">
+      <h2>exericing Timer</h2>
+      <label for="exercise-name">Exercise Name:</label>
+      <input type="text" id="exercise-name" placeholder="e.g., Push-ups">
+      <label for="timer-limit">Set Time Limit (minutes):</label>
+      <input type="number" id="timer-limit" placeholder="e.g., 1">
+      <div class="timer-display" id="timer-display">00:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>exerice Log</h2>
+      <label for="steps">Steps Taken:</label>
+      <input type="number" id="steps" placeholder="e.g., 5000">
+      <label for="calories">Calories Burned:</label>
+      <input type="number" id="calories" placeholder="e.g., 300">
+      <label for="hours">Hours of Exercise:</label>
+      <input type="number" id="hours" placeholder="auto-filled from timer">
+      <button onclick="trackFitness()">Track Fitness</button>
+      <div class="output" id="results" style="display:none;">
+        <p id="steps-summary"></p>
+        <p id="calories-summary"></p>
+        <p id="hours-summary"></p>
+      </div>
+      <div class="output" id="progress" style="display:none;">
+        <h3>Total Progress</h3>
+        <p id="progress-summary"></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>food Tracker</h2>
+      <label for="food-select">Choose Food:</label>
+      <select id="food-select">
+        <option value="apple" data-calories="95">Apple - 95 kcal</option>
+        <option value="banana" data-calories="105">Banana - 105 kcal</option>
+        <option value="chicken" data-calories="165">Grilled Chicken - 165 kcal</option>
+        <option value="rice" data-calories="200">Rice - 200 kcal</option>
+        <option value="egg" data-calories="70">Egg - 70 kcal</option>
+        <option value="bread" data-calories="70">Bread - 70 kcal</option>
+        <option value="salmon" data-calories="206">Salmon - 206 kcal</option>
+        <option value="chips" data-calories="150">Chips - 150 kcal</option>
+        <option value="yogurt" data-calories="120">Yogurt - 120 kcal</option>
+      </select>
+      <button onclick="addFood()">Add Food</button>
+      <div class="output" id="food-results" style="display:none;">
+        <ul id="food-list"></ul>
+        <p><strong>Total Food Calories:</strong> <span id="total-food-calories">0</span> kcal</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Water Tracker</h2>
+      <label for="water-ml">Add Water (ml):</label>
+      <input type="number" id="water-ml" placeholder="e.g., 250">
+      <button onclick="addWater()">Add Water</button>
+      <div class="output" id="water-results" style="display: none;">
+        <ul id="water-log"></ul>
+        <p><strong>Total Water Drank:</strong> <span id="total-water">0</span> ml</p>
+      </div>
+    </div>
+
+    <div class="section output" id="workout-summary" style="display:none;">
+      <h3>exericing History</h3>
+      <div id="workout-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let workoutHistory = [];
+    let foodItems = [];
+    let waterLog = [];
+    let timer = 0;
+    let interval = null;
+    let timeLimit = 0;
+    const beep = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+
+    function updateTimerDisplay() {
+      const minutes = String(Math.floor(timer / 60)).padStart(2, '0');
+      const seconds = String(timer % 60).padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
+    }
+
+    function startTimer() {
+      if (interval) return;
+      const limitInput = parseInt(document.getElementById('timer-limit').value);
+      if (!isNaN(limitInput) && limitInput > 0) {
+        timeLimit = limitInput * 60;
+      } else {
+        timeLimit = 0;
+      }
+
+      interval = setInterval(() => {
+        timer++;
+        updateTimerDisplay();
+        if (timeLimit > 0 && timer >= timeLimit) {
+          clearInterval(interval);
+          interval = null;
+          beep.play();
+          alert("Time's up for your exercise!");
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      interval = null;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timer = 0;
+      timeLimit = 0;
+      updateTimerDisplay();
+      document.getElementById('hours').value = '';
+    }
+
+    function trackFitness() {
+      const weight = document.getElementById('weight').value;
+      const height = document.getElementById('height').value;
+      const steps = document.getElementById('steps').value;
+      const calories = document.getElementById('calories').value;
+      const exercise = document.getElementById('exercise-name').value;
+      let hours = document.getElementById('hours').value;
+
+      if (!weight || !height || !steps || !calories || !exercise) {
+        alert("Please fill all required fields including the exercise name.");
+        return;
+      }
+
+      if (!hours) {
+        hours = (timer / 3600).toFixed(2);
+        document.getElementById('hours').value = hours;
+      }
+
+      const workout = { weight, height, steps, calories, hours, exercise, date: new Date().toLocaleString() };
+      workoutHistory.push(workout);
+
+      document.getElementById('steps-summary').textContent = `Steps: ${steps}`;
+      document.getElementById('calories-summary').textContent = `Calories Burned: ${calories} kcal`;
+      document.getElementById('hours-summary').textContent = `Exercise Time: ${hours} hours`;
+      document.getElementById('results').style.display = 'block';
+
+      const totalSteps = workoutHistory.reduce((sum, w) => sum + parseInt(w.steps), 0);
+      const totalCalories = workoutHistory.reduce((sum, w) => sum + parseInt(w.calories), 0);
+      const totalHours = workoutHistory.reduce((sum, w) => sum + parseFloat(w.hours), 0);
+
+      document.getElementById('progress-summary').textContent = 
+        `Total: ${totalSteps} steps | ${totalCalories} kcal | ${totalHours.toFixed(2)} hrs`;
+      document.getElementById('progress').style.display = 'block';
+
+      const workoutList = workoutHistory.map((w, i) => 
+        `<p>Workout ${i + 1}: ${w.date} - ${w.exercise} - ${w.steps} steps, ${w.calories} kcal, ${w.hours} hrs</p>`).join('');
+      document.getElementById('workout-list').innerHTML = workoutList;
+      document.getElementById('workout-summary').style.display = 'block';
+    }
+
+    function addFood() {
+      const select = document.getElementById('food-select');
+      const option = select.options[select.selectedIndex];
+      const foodName = option.text;
+      const calories = parseInt(option.getAttribute('data-calories'));
+
+      foodItems.push({ foodName, calories });
+
+      const list = document.getElementById('food-list');
+      list.innerHTML = foodItems.map(item => `<li>${item.foodName}</li>`).join('');
+
+      const total = foodItems.reduce((sum, item) => sum + item.calories, 0);
+      document.getElementById('total-food-calories').textContent = total;
+      document.getElementById('food-results').style.display = 'block';
+    }
+
+    function addWater() {
+      const mlInput = document.getElementById('water-ml');
+      const ml = parseInt(mlInput.value);
+
+      if (isNaN(ml) || ml <= 0) {
+        alert("Please enter a valid amount of water in ml.");
+        return;
+      }
+
+      const entryTime = new Date().toLocaleTimeString();
+      waterLog.push({ ml, time: entryTime });
+
+      const list = document.getElementById('water-log');
+      list.innerHTML = waterLog.map(item => `<li>${item.ml} ml at ${item.time}</li>`).join('');
+
+      const totalWater = waterLog.reduce((sum, item) => sum + item.ml, 0);
+      document.getElementById('total-water').textContent = totalWater;
+      document.getElementById('water-results').style.display = 'block';
+      mlInput.value = '';
+    }
+  </script>
+</body>
+</html>

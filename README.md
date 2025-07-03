@@ -1,4 +1,4 @@
-## Hi there 👋 i am here to code some website /html so can you check it 
+## Hi there 👋 i am here to code some website /html so can you check it  so i could try to code some 
 
 
 <!--
